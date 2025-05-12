@@ -1,11 +1,17 @@
 # Sched1PlantsAlwaysGrowMod
 
 A simple Harmony mod for Schedule I that makes plants grow even after 4AM.
+
 Works by adding a prefix to the Plant.MinPass method. That's it!
+
 Compatible with IL2CPP and Mono versions (main and alternate branches) of Schedule I.
+
 Compatible with WagesApp mod on Nexus Mods.
+
 [Nexus Mods Page](https://www.nexusmods.com/schedule1/mods/945)
+
 [Thunderstore Page (Mono)](https://thunderstore.io/c/schedule-i/p/lasersquid/PlantsAlwaysGrowMono/)
+
 [Thunderstore Page (IL2CPP)](https://thunderstore.io/c/schedule-i/p/lasersquid/PlantsAlwaysGrowIL2CPP/)
 
 
