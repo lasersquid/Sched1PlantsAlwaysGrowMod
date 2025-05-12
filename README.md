@@ -11,8 +11,8 @@ Compatible with WagesApp mod on Nexus Mods.
 
 
 ## Build instructions:
-1. Clone repo and open solution in Visual Studio.
-2. Load PlantsAlwaysGrow.csproj for the IL2CPP version, and PlantsAlwaysGrowMono.csproj for the Mono version.
+1. Clone repo. Create directories "il2cpp_libs" and "mono_libs" inside PlantsAlwaysGrow directory.
+2. Open solution in Visual Studio (I used v2022). Load PlantsAlwaysGrow.csproj for the IL2CPP version, and PlantsAlwaysGrowMono.csproj for the Mono version.
 3. Install recommended NuGet packages (Project>Manage NuGet Packages).
 4. For each missing dependency, copy required libraries to the respective *_libs directories.
 	* For the IL2CPP libraries, copy DLLs from Schedule I's "MelonLoader/Il2CppAssemblies" directory to the il2cpp_libs directory.
@@ -22,7 +22,6 @@ Compatible with WagesApp mod on Nexus Mods.
 
 
 ## Install instructions:
-
 	* Manual: Copy PlantsAlwaysGrow.dll/PlantsAlwaysGrowMono.dll from project bin/Debug/net6 directory to Schedule I's mods directory.
 	* Vortex: Open Vortex, select game and click on "Mods" tab. Click "Install From File" button and navigate to appropriate dll. Vortex mod coming soon.
 
