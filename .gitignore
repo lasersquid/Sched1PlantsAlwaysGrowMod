@@ -365,3 +365,6 @@ FodyWeavers.xsd
 # Do not commit dependencies for legal reasons
 PlantsAlwaysGrow/il2cpp_libs/*
 PlantsAlwaysGrow/mono_libs/*
+
+# Ignore package dir
+PlantsAlwaysGrow/package/*

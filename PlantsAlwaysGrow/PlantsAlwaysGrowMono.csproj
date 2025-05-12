@@ -53,4 +53,8 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <DefineConstants>$(DefineConstants);MONO_BUILD</DefineConstants>
 	</PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="Powershell .\MakeVortexPackage.ps1 -ver mono" />
+	</Target>
 </Project>

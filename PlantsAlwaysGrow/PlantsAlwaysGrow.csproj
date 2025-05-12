@@ -55,4 +55,8 @@
 	  <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
 	  <PackageReference Include="Lib.Harmony" Version="2.3.6" />
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="Powershell .\MakeVortexPackage.ps1 -ver il2cpp" />
+	</Target>
 </Project>
