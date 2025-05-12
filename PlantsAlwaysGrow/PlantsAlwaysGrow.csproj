@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<RootNamespace>PlantsAlwaysGrow</RootNamespace>
+		<LangVersion>default</LangVersion>
+		<IsPackable>false</IsPackable>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<AssemblyName>PlantsAlwaysGrow</AssemblyName>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+	  <EmbeddedResource Remove="mono_libs\**" />
+	  <None Remove="mono_libs\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>il2cpp_libs\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppFishNet.Runtime">
+		  <HintPath>libs\Il2CppFishNet.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2CppInterop.Runtime">
+		  <HintPath>libs\Il2CppInterop.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="Il2Cppmscorlib">
+		  <HintPath>libs\Il2Cppmscorlib.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+		  <HintPath>il2cpp_libs\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+		  <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+
+	</ItemGroup>
+
+	<PropertyGroup>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="Mod.cs" />
+		<Compile Include="PlantsAlwaysGrow.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
+	  <PackageReference Include="Lib.Harmony" Version="2.3.6" />
+	</ItemGroup>
+</Project>
