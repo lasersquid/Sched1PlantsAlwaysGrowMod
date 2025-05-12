@@ -24,19 +24,19 @@
 		  <HintPath>il2cpp_libs\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2CppFishNet.Runtime">
-		  <HintPath>libs\Il2CppFishNet.Runtime.dll</HintPath>
+		  <HintPath>il2cpp_libs\Il2CppFishNet.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2CppInterop.Runtime">
-		  <HintPath>libs\Il2CppInterop.Runtime.dll</HintPath>
+		  <HintPath>il2cpp_libs\Il2CppInterop.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2Cppmscorlib">
-		  <HintPath>libs\Il2Cppmscorlib.dll</HintPath>
+		  <HintPath>il2cpp_libs\Il2Cppmscorlib.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine">
 		  <HintPath>il2cpp_libs\UnityEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-		  <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+		  <HintPath>il2cpp_libs\UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
 
 	</ItemGroup>
