@@ -55,6 +55,6 @@
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="Powershell .\MakeVortexPackage.ps1 -ver mono" />
+	  <Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -ver mono&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch mono -ver $(VersionPrefix)" />
 	</Target>
 </Project>
