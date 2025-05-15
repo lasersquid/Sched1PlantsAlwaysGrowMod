@@ -1,25 +1,44 @@
 
 param (
-    [string]$ver = "il2cpp"
+    [string]$ver = "1.0.0",
+    [string]$arch = "il2cpp",
+    [string]$proj = ""
  )
 
-  # Check param
- if ("$ver" -eq "il2cpp") {
-    $dll_file = "PlantsAlwaysGrow.dll"
+ # Check params
+ if ("$arch" -eq "il2cpp") {
+    $dll_file = "$($proj).dll"
     $arch_str = "IL2CPP"
+    $net_ver = "net6"
 }
-elseif ("$ver" -eq "mono") {
-    $dll_file = "PlantsAlwaysGrowMono.dll"
+elseif ("$arch" -eq "mono") {
+    $dll_file = "$($proj)Mono.dll"
     $arch_str = "Mono"
+    $net_ver = "netstandard2.1"
 }
 else {
-    Write-Output 'Specify "-ver il2cpp" or "-ver mono"!'
+    Write-Output 'Specify "-arch il2cpp" or "-ver mono"!'
     Exit -1
 }
 
-rm -Recurse -Force "package\$($ver)"
-mkdir "package\vortex\$($ver)\mods"
-Copy "bin\Debug\net6\$($dll_file)" "package\vortex\$($ver)\mods"
-cd "package\vortex\$($ver)"
-Compress-Archive -Path '*' -DestinationPath "..\PlantsAlwaysGrow_$($arch_str).zip"
+if ("$($proj)" -eq "") {
+    Write-Output 'Specify "-proj <projectname>"!'
+    Exit -1
+}
+
+$zip_file = "$($proj)_$($arch_str)-$($ver).zip"
+
+# Clean and create directory structure
+rm -Recurse -Force "package\vortex\$($arch)"
+rm -Force "package\vortex\$($zip_file)"
+mkdir "package\vortex\$($arch)\mods"
+
+# Copy the files
+Write-Output "copy from path: bin\Debug\$($net_ver)\$($dll_file)"
+Copy "bin\Debug\$($net_ver)\$($dll_file)" "package\vortex\$($arch)\mods"
+
+# Zip it all up
+cd "package\vortex\$($arch)"
+Compress-Archive -Path '*' -DestinationPath "..\$($zip_file)"
+
 cd ..\..\..

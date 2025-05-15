@@ -1,7 +1,7 @@
 {
     "name": "PlantsAlwaysGrow%%ARCH%%",
     "version_number": "%%VERSION%%",
-    "website_url": "https://github.com/lasersquid/PlantsAlwaysGrow",
+    "website_url": "https://github.com/lasersquid/Sched1PlantsAlwaysGrowMod",
     "description": "A simple Harmony mod that makes plants grow even after 4AM. %%ARCH%% version.",
     "dependencies": [
 	"LavaGang-MelonLoader-0.7.0"
