@@ -3,7 +3,7 @@ using MelonLoader;
 using HarmonyLib;
 
 
-[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.0.0", "lasersquid", null)]
+[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.1.0", "lasersquid", null)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace PlantsAlwaysGrow
@@ -17,7 +17,7 @@ namespace PlantsAlwaysGrow
         public override void OnInitializeMelon()
         {
             MelonEvents.OnSceneWasLoaded.Subscribe(OnSceneLoaded);
-            LoggerInstance.Msg("EmployeesAlwaysWorkWithoutBedsMod Initialized.");
+            LoggerInstance.Msg("PlantsAlwaysGrow initialized.");
         }
 
         private void OnSceneLoaded(int buildIndex, string sceneName)
@@ -29,7 +29,6 @@ namespace PlantsAlwaysGrow
                     _harmonyInstance = new HarmonyLib.Harmony("PlantsAlwaysGrowMod");
                     _harmonyInstance.PatchAll();
                     _isPatchApplied = true;
-                    base.LoggerInstance.Msg("Plants Always Grow successfully initialized in scene: " + sceneName);
                 }
                 catch (Exception ex)
                 {
@@ -38,8 +37,11 @@ namespace PlantsAlwaysGrow
             }
         }
     }
-
-
-
 }
+
+// todo
+// update project configuration - done
+// pull in generic utils class - done
+// fix initialization msg - done
+// shrooms update - done
 

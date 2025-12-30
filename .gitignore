@@ -363,8 +363,9 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Do not commit dependencies for legal reasons
-PlantsAlwaysGrow/il2cpp_libs/*
-PlantsAlwaysGrow/mono_libs/*
+**/il2cpp_libs/*
+**/mono_libs/*
 
-# Ignore package dir
-PlantsAlwaysGrow/package/*
+# Ignore generated dirs
+**/package/*
+**/Properties/*

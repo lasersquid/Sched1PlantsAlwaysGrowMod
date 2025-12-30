@@ -5,30 +5,16 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantsAlwaysGrow", "PlantsAlwaysGrow\PlantsAlwaysGrow.csproj", "{79861CC6-FFA7-42F6-B430-DA7EB436828F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlantsAlwaysGrowMono", "PlantsAlwaysGrow\PlantsAlwaysGrowMono.csproj", "{638D30FE-4692-7874-691C-2C4E9423D9B0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		IL2CPP|Any CPU = IL2CPP|Any CPU
 		Mono|Any CPU = Mono|Any CPU
-		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.IL2CPP|Any CPU.ActiveCfg = Release|Any CPU
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.IL2CPP|Any CPU.ActiveCfg = Release|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.IL2CPP|Any CPU.Build.0 = Release|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Mono|Any CPU.Build.0 = Debug|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{638D30FE-4692-7874-691C-2C4E9423D9B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.IL2CPP|Any CPU.ActiveCfg = IL2CPP|Any CPU
+		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.IL2CPP|Any CPU.Build.0 = IL2CPP|Any CPU
+		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Mono|Any CPU.ActiveCfg = Mono|Any CPU
+		{79861CC6-FFA7-42F6-B430-DA7EB436828F}.Mono|Any CPU.Build.0 = Mono|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

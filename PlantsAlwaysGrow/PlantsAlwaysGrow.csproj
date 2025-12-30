@@ -1,31 +1,21 @@
-﻿<Project>
-	<!-- An empty project tags allows us to set properties before paths in Sdk.props are set. -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<ProjName>PlantsAlwaysGrow</ProjName>
-		<GameVer>il2cpp</GameVer>
-		<Version>1.0.1</Version>
-		
-		<BaseOutputPath>$(MSBuildProjectDirectory)\bin</BaseOutputPath>
-		<BaseIntermediateOutputPath>$(MSBuildProjectDirectory)\obj\$(GameVer)</BaseIntermediateOutputPath>
-		<ProjectAssetsFile>$(BaseIntermediateOutputPath)\project.assets.json</ProjectAssetsFile>
-		<ProjectAssetsCacheFile>$(BaseIntermediateOutputPath)\cache\$(MSBuildProjectName).assets.cache</ProjectAssetsCacheFile>
-		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<Version>1.1.0</Version>
+		<GameDir>C:\Program Files (x86)\Steam\steamapps\common\Schedule I</GameDir>
+		<GamePath>$(GameDir)\Schedule I.exe</GamePath>
 	</PropertyGroup>
 
-	<!-- This import is required before the remaining contents of our project file. -->
-	<Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-	
-	<!-- Conditionally set some properties depending on GameVer. -->
-	<PropertyGroup Condition ="'$(GameVer)'=='il2cpp'">
+	<!-- Conditionally set some properties depending on Configuration. -->
+	<PropertyGroup Condition="'$(Configuration)'=='IL2CPP'">
 		<TargetFramework>net6</TargetFramework>
-		<AssemblyName >$(ProjName)</AssemblyName>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition ="'$(GameVer)'=='mono'">
+
+	<PropertyGroup Condition="'$(Configuration)'=='Mono'">
 		<TargetFramework>netstandard2.1</TargetFramework>
-		<AssemblyName >$(ProjName)Mono</AssemblyName>
+		<DefineConstants>$(DefineConstants);MONO_BUILD;</DefineConstants>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
@@ -33,23 +23,26 @@
 		<LangVersion>default</LangVersion>
 		<IsPackable>false</IsPackable>
 		<AssemblyVersion>$(VersionString)</AssemblyVersion>
+		<AssemblyName>$(ProjName)$(Configuration)</AssemblyName>
 		<FileVersion>$(VersionString)</FileVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Configurations>Debug;Release</Configurations>
+		<Configurations>IL2CPP;Mono</Configurations>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
 	</PropertyGroup>
 
-	<!-- Hide libs directory of other GameVer -->
-	<ItemGroup Condition="'$(GameVer)'=='mono'">
+	<!-- Hide libs directory of other Configuration -->
+	<ItemGroup Condition="'$(Configuration)'=='Mono'">
 		<EmbeddedResource Remove="il2cpp_libs\**" />
 		<None Remove="il2cpp_libs\**" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(GameVer)'=='il2cpp'">
+	<ItemGroup Condition="'$(Configuration)'=='IL2CPP'">
 		<EmbeddedResource Remove="mono_libs\**" />
 		<None Remove="mono_libs\**" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<EmbeddedResource Remove="bin\**" />
 		<EmbeddedResource Remove="obj\**" />
@@ -61,7 +54,7 @@
 		<None Remove="package_resources\**" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(Configuration)'=='IL2CPP'">
 		<Reference Include="Assembly-CSharp">
 			<HintPath>il2cpp_libs\Assembly-CSharp.dll</HintPath>
 		</Reference>
@@ -80,7 +73,27 @@
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>il2cpp_libs\UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
+		<Reference Include="UnityEngine.ParticleSystemModule">
+			<HintPath>il2cpp_libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
+	<ItemGroup Condition="'$(Configuration)'=='Mono'">
+		<Reference Include="Assembly-CSharp">
+			<HintPath>mono_libs\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="FishNet.Runtime">
+			<HintPath>mono_libs\Il2CppFishNet.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>mono_libs\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>mono_libs\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.ParticleSystemModule">
+			<HintPath>mono_libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -99,9 +112,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -arch $(GameVer) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch $(GameVer) -ver $(Version) -proj $(ProjName)" />
+		<Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)" />
 	</Target>
-	
-	<!-- This import is required here if we use a Project tag with no properties -->
-	<Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
