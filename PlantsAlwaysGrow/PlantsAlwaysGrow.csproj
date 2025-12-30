@@ -112,6 +112,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)" />
+		<Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;del &quot;$(GameDir)\mods\$(ProjName)*.dll&quot; 2&gt;nul&#xD;&#xA;copy &quot;bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).dll&quot; &quot;$(GameDir)\mods\&quot;&#xD;&#xA;" />
 	</Target>
 </Project>

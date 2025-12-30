@@ -9,8 +9,6 @@ using ScheduleOne.DevUtilities;
 using ScheduleOne.GameTime;
 using ScheduleOne.Growing;
 using ScheduleOne.Lighting;
-using ScheduleOne.ObjectScripts;
-using ShroomList = System.Collections.Generic.List<ScheduleOne.Growing.GrowingMushroom>;
 #else
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
@@ -18,8 +16,6 @@ using Il2CppScheduleOne.DevUtilities;
 using Il2CppScheduleOne.GameTime;
 using Il2CppScheduleOne.Growing;
 using Il2CppScheduleOne.Lighting;
-using Il2CppScheduleOne.ObjectScripts;
-using ShroomList = Il2CppSystem.Collections.Generic.List<Il2CppScheduleOne.Growing.GrowingMushroom>;
 #endif
 
 namespace PlantsAlwaysGrow
@@ -209,11 +205,11 @@ namespace PlantsAlwaysGrow
     {
         [HarmonyPatch(typeof(Plant), "MinPass")]
         [HarmonyPostfix]
-        public static bool PlantMinPassPostfix(Plant __instance, int mins)
+        public static void PlantMinPassPostfix(Plant __instance, int mins)
         {
             if (__instance.NormalizedGrowthProgress >= 1f)
             {
-                return false;
+                return;
             }
             if (NetworkSingleton<TimeManager>.Instance.IsEndOfDay)
             {
@@ -231,9 +227,10 @@ namespace PlantsAlwaysGrow
                 {
                     num *= 0f;
                 }
+
                 __instance.SetNormalizedGrowthProgress(__instance.NormalizedGrowthProgress + num);
             }
-            return false;
+            return;
         }
 
         [HarmonyPatch(typeof(ShroomColony), "OnMinPass")]
@@ -243,84 +240,12 @@ namespace PlantsAlwaysGrow
             if (NetworkSingleton<TimeManager>.Instance.IsEndOfDay)
             {
                 int growTime = (int)Utils.GetField<ShroomColony>("_growTime", __instance);
-                float currentGrowthRate = GetCurrentGrowthRate(__instance);
-                ChangeGrowthPercentage(__instance, (currentGrowthRate / ((float)growTime * 60f)));
+                float currentGrowthRate = (float)Utils.CallMethod<ShroomColony>("GetCurrentGrowthRate", __instance);
+                float change = currentGrowthRate / ((float)growTime * 60f);
+                Utils.CallMethod<ShroomColony>("ChangeGrowthPercentage", __instance, [change]);
             }
             return;
         }
-
-        private static float GetCurrentGrowthRate(ShroomColony colony)
-        {
-            try
-            {
-                return (float)Utils.CallMethod<ShroomColony>("GetCurrentGrowthRate", colony);
-            }
-            catch (Exception e)
-            {
-                Utils.Warn($"ShroomColony.GetCurrentGrowthRate is inlined, probably");
-            }
-
-            if (colony.IsTooHotToGrow)
-            {
-                return 0f;
-            }
-            if (Utils.GetField<ShroomColony, MushroomBed>("_parentBed", colony).NormalizedMoistureAmount <= 0.0001f)
-            {
-                return 0f;
-            }
-            return 1f;
-        }
-
-        private static void ChangeGrowthPercentage(ShroomColony colony, float change)
-        {
-            try
-            {
-                Utils.CallMethod<ShroomColony>("ChangeGrowthPercentage", colony, [change]);
-                return;
-            }
-            catch (Exception e)
-            {
-                Utils.Warn($"ShroomColony.ChangeGrowthPercentage was inlined");
-            }
-
-            try
-            {
-                Utils.CallMethod<ShroomColony>("SetGrowthPercentage", colony, [colony.GrowthProgress + change]);
-                return;
-            }
-            catch (Exception e)
-            {
-                Utils.Warn($"ShroomColony.SetGrowthPercentage was inlined also");
-            }
-
-            float percent = colony.GrowthProgress + change;
-            if (Mathf.Approximately(percent, colony.GrowthProgress))
-            {
-                return;
-            }
-            Utils.SetProperty<ShroomColony>("GrowthProgress", colony, percent);
-            ShroomList growingShrooms = Utils.GetField<ShroomColony, ShroomList>("_growingMushrooms", colony);
-            foreach (GrowingMushroom growingMushroom in growingShrooms)
-            {
-                // if this is inlined i swear to god
-                growingMushroom.SetGrowthPercent(colony.GrowthProgress);
-            }
-
-            ParticleSystem fullyGrownParticles = Utils.GetField<ShroomColony, ParticleSystem>("_fullyGrownParticles", colony);
-            if (colony.IsFullyGrown)
-            {
-                if (!fullyGrownParticles.isPlaying)
-                {
-                    fullyGrownParticles.Play();
-                    return;
-                }
-            }
-            else if (fullyGrownParticles.isPlaying)
-            {
-                fullyGrownParticles.Stop();
-            }
-        }
-
 
         // This function has been optimized out completely--vtable entry is blank??
         // Call a local copy
