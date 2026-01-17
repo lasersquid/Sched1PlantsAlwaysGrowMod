@@ -2,8 +2,8 @@
 	<PropertyGroup>
 		<ProjName>PlantsAlwaysGrow</ProjName>
 		<Version>1.1.0</Version>
-		<GameDir>C:\Program Files (x86)\Steam\steamapps\common\Schedule I</GameDir>
-		<GamePath>$(GameDir)\Schedule I.exe</GamePath>
+		<GameDir>C:/Program Files (x86)/Steam/steamapps/common/Schedule I</GameDir>
+		<GamePath>$(GameDir)/Schedule I.exe</GamePath>
 	</PropertyGroup>
 
 	<!-- Conditionally set some properties depending on Configuration. -->
@@ -35,64 +35,64 @@
 
 	<!-- Hide libs directory of other Configuration -->
 	<ItemGroup Condition="'$(Configuration)'=='Mono'">
-		<EmbeddedResource Remove="il2cpp_libs\**" />
-		<None Remove="il2cpp_libs\**" />
+		<EmbeddedResource Remove="il2cpp_libs/**" />
+		<None Remove="il2cpp_libs/**" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(Configuration)'=='IL2CPP'">
-		<EmbeddedResource Remove="mono_libs\**" />
-		<None Remove="mono_libs\**" />
+		<EmbeddedResource Remove="mono_libs/**" />
+		<None Remove="mono_libs/**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Remove="bin\**" />
-		<EmbeddedResource Remove="obj\**" />
-		<EmbeddedResource Remove="package\**" />
-		<EmbeddedResource Remove="package_resources\**" />
-		<None Remove="bin\**" />
-		<None Remove="obj\**" />
-		<None Remove="package\**" />
-		<None Remove="package_resources\**" />
+		<EmbeddedResource Remove="bin/**" />
+		<EmbeddedResource Remove="obj/**" />
+		<EmbeddedResource Remove="package/**" />
+		<EmbeddedResource Remove="package_resources/**" />
+		<None Remove="bin/**" />
+		<None Remove="obj/**" />
+		<None Remove="package/**" />
+		<None Remove="package_resources/**" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='IL2CPP'">
 		<Reference Include="Assembly-CSharp">
-			<HintPath>il2cpp_libs\Assembly-CSharp.dll</HintPath>
+			<HintPath>il2cpp_libs/Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2CppFishNet.Runtime">
-			<HintPath>il2cpp_libs\Il2CppFishNet.Runtime.dll</HintPath>
+			<HintPath>il2cpp_libs/Il2CppFishNet.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2CppInterop.Runtime">
-			<HintPath>il2cpp_libs\Il2CppInterop.Runtime.dll</HintPath>
+			<HintPath>il2cpp_libs/Il2CppInterop.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="Il2Cppmscorlib">
-			<HintPath>il2cpp_libs\Il2Cppmscorlib.dll</HintPath>
+			<HintPath>il2cpp_libs/Il2Cppmscorlib.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine">
-			<HintPath>il2cpp_libs\UnityEngine.dll</HintPath>
+			<HintPath>il2cpp_libs/UnityEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>il2cpp_libs\UnityEngine.CoreModule.dll</HintPath>
+			<HintPath>il2cpp_libs/UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.ParticleSystemModule">
-			<HintPath>il2cpp_libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+			<HintPath>il2cpp_libs/UnityEngine.ParticleSystemModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='Mono'">
 		<Reference Include="Assembly-CSharp">
-			<HintPath>mono_libs\Assembly-CSharp.dll</HintPath>
+			<HintPath>mono_libs/Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="FishNet.Runtime">
-			<HintPath>mono_libs\Il2CppFishNet.Runtime.dll</HintPath>
+			<HintPath>mono_libs/Il2CppFishNet.Runtime.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine">
-			<HintPath>mono_libs\UnityEngine.dll</HintPath>
+			<HintPath>mono_libs/UnityEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
-			<HintPath>mono_libs\UnityEngine.CoreModule.dll</HintPath>
+			<HintPath>mono_libs/UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.ParticleSystemModule">
-			<HintPath>mono_libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+			<HintPath>mono_libs/UnityEngine.ParticleSystemModule.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
@@ -112,6 +112,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="Powershell .\package_resources\MakeVortexPackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell .\package_resources\MakeThunderstorePackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;del &quot;$(GameDir)\mods\$(ProjName)*.dll&quot; 2&gt;nul&#xD;&#xA;copy &quot;bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).dll&quot; &quot;$(GameDir)\mods\&quot;&#xD;&#xA;" />
+		<Exec Command="Powershell ./package_resources/MakeVortexPackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell ./package_resources/MakeThunderstorePackage.ps1 -arch $(Configuration) -ver $(Version) -proj $(ProjName)&#xD;&#xA;Powershell ./package_resources/DeployMod.ps1 -arch $(Configuration) -proj $(ProjName)&#xD;&#xA;" />
 	</Target>
 </Project>
