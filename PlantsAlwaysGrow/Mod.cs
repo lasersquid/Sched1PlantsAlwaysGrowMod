@@ -3,7 +3,7 @@ using MelonLoader;
 using HarmonyLib;
 
 
-[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.1.0", "lasersquid", null)]
+[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.2.0", "lasersquid", null)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace PlantsAlwaysGrow
@@ -45,4 +45,4 @@ namespace PlantsAlwaysGrow
 // pull in generic utils class - done
 // fix initialization msg - done
 // shrooms update - done
-
+// storage update - done (1.2.0)
