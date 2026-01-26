@@ -17,6 +17,7 @@ namespace PlantsAlwaysGrow
         public override void OnInitializeMelon()
         {
             MelonEvents.OnSceneWasLoaded.Subscribe(OnSceneLoaded);
+            Utils.Initialize(this);
             LoggerInstance.Msg("PlantsAlwaysGrow initialized.");
         }
 

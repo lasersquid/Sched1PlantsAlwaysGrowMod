@@ -3,12 +3,16 @@ using MelonLoader;
 using UnityEngine.Diagnostics;
 using UnityEngine.Events;
 using UnityEngine;
+using System.Reflection;
+
+
 
 #if MONO_BUILD
 using ScheduleOne.DevUtilities;
 using ScheduleOne.GameTime;
 using ScheduleOne.Growing;
 using ScheduleOne.Lighting;
+using Action = System.Action;
 #else
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime;
@@ -16,7 +20,12 @@ using Il2CppScheduleOne.DevUtilities;
 using Il2CppScheduleOne.GameTime;
 using Il2CppScheduleOne.Growing;
 using Il2CppScheduleOne.Lighting;
+using Action = Il2CppSystem.Action;
+using ActionList = Il2Cpp.ActionList;
 #endif
+
+// Yes I intended a reference comparison. Stop making yellow squigglies at me.
+#pragma warning disable CS0252 // Possible unintended reference comparison; left hand side needs cast
 
 namespace PlantsAlwaysGrow
 {
@@ -24,28 +33,24 @@ namespace PlantsAlwaysGrow
     {
         public static PlantsAlwaysGrowMod Mod;
 
-        public static void PrintException(Exception e)
+        private static Assembly S1Assembly;
+
+        public static void Initialize(PlantsAlwaysGrowMod mod)
         {
-            Utils.Warn($"Exception: {e.GetType().Name} - {e.Message}");
-            Utils.Warn($"Source: {e.Source}");
-            Utils.Warn($"{e.StackTrace}");
-            if (e.InnerException != null)
-            {
-                Utils.Warn($"Inner exception: {e.InnerException.GetType().Name} - {e.InnerException.Message}");
-                Utils.Warn($"Source: {e.InnerException.Source}");
-                Utils.Warn($"{e.InnerException.StackTrace}");
-                if (e.InnerException.InnerException != null)
-                {
-                    Utils.Warn($"Inner inner exception: {e.InnerException.InnerException.GetType().Name} - {e.InnerException.InnerException.Message}");
-                    Utils.Warn($"Source: {e.InnerException.InnerException.Source}");
-                    Utils.Warn($"{e.InnerException.InnerException.StackTrace}");
-                }
-            }
+            Mod = mod;
+#if !MONO_BUILD
+            S1Assembly = AppDomain.CurrentDomain.GetAssemblies().First((Assembly a) => a.GetName().Name == "Assembly-CSharp");
+#endif
         }
+
+        // Reflection convenience methods.
+        // Needed to access private members in mono.
+        // Also handles the property-fying of fields in IL2CPP.
+        // Treturn cannot be an interface type in IL2CPP; use ToInterface for that.
 
         public static Treturn GetField<Ttarget, Treturn>(string fieldName, object target) where Treturn : class
         {
-            return CastTo<Treturn>(GetField<Ttarget>(fieldName, target));
+            return (Treturn)GetField<Ttarget>(fieldName, target);
         }
 
         public static object GetField<Ttarget>(string fieldName, object target)
@@ -66,9 +71,9 @@ namespace PlantsAlwaysGrow
 #endif
         }
 
-        public static Treturn GetProperty<Ttarget, Treturn>(string fieldName, object target) where Treturn : class
+        public static Treturn GetProperty<Ttarget, Treturn>(string fieldName, object target)
         {
-            return CastTo<Treturn>(GetProperty<Ttarget>(fieldName, target));
+            return (Treturn)GetProperty<Ttarget>(fieldName, target);
         }
 
         public static object GetProperty<Ttarget>(string fieldName, object target)
@@ -81,19 +86,19 @@ namespace PlantsAlwaysGrow
             AccessTools.Property(typeof(Ttarget), fieldName).SetValue(target, value);
         }
 
-        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, object target) where Treturn : class
+        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, object target)
         {
-            return CastTo<Treturn>(CallMethod<Ttarget>(methodName, target, []));
+            return (Treturn)CallMethod<Ttarget>(methodName, target, []);
         }
 
-        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, object target, object[] args) where Treturn : class
+        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, object target, object[] args)
         {
-            return CastTo<Treturn>(CallMethod<Ttarget>(methodName, target, args));
+            return (Treturn)CallMethod<Ttarget>(methodName, target, args);
         }
 
-        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, Type[] argTypes, object target, object[] args) where Treturn : class
+        public static Treturn CallMethod<Ttarget, Treturn>(string methodName, Type[] argTypes, object target, object[] args)
         {
-            return CastTo<Treturn>(CallMethod<Ttarget>(methodName, argTypes, target, args));
+            return (Treturn)CallMethod<Ttarget>(methodName, argTypes, target, args);
         }
 
         public static object CallMethod<Ttarget>(string methodName, object target)
@@ -110,13 +115,15 @@ namespace PlantsAlwaysGrow
         {
             return AccessTools.Method(typeof(Ttarget), methodName, argTypes).Invoke(target, args);
         }
+        
 
-        public static void SetMod(PlantsAlwaysGrowMod mod)
-        {
-            Mod = mod;
-        }
+        // Type checking and conversion methods
 
-        public static T CastTo<T>(object o) where T : class
+        // In IL2CPP, do a type check before performing a forced cast, returning default (usually null) on failure.
+        // In Mono, do a type check before a regular cast, returning default on type check failure.
+        // You can't use CastTo with T as an Il2Cpp interface; use ToInterface for that.
+#if MONO_BUILD
+        public static T CastTo<T>(object o)
         {
             if (o is T)
             {
@@ -124,28 +131,79 @@ namespace PlantsAlwaysGrow
             }
             else
             {
-                return null;
+                return default(T);
             }
         }
+#else
+        public static T CastTo<T>(Il2CppObjectBase o) where T : Il2CppObjectBase
+        {
+            if (typeof(T).IsAssignableFrom(GetType(o)))
+            {
+                return (T)System.Activator.CreateInstance(typeof(T), [o.Pointer]);
+            }
+            return default(T);
+        }
+#endif
 
+        // Under Il2Cpp, "is" operator only looks at local scope for type info,
+        // instead of checking object identity. 
+        // Check against actual object type obtained via GetType.
+        // In Mono, use standard "is" operator.
+        // Will always return false for Il2Cpp interfaces.
+#if MONO_BUILD
         public static bool Is<T>(object o)
         {
             return o is T;
         }
-
-#if !MONO_BUILD
-        public static T CastTo<T>(Il2CppSystem.Object o) where T : Il2CppObjectBase
-        { 
-            return o.TryCast<T>();
-        }
-
-        public static bool Is<T>(Il2CppSystem.Object o) where T : Il2CppObjectBase
+#else
+        public static bool Is<T>(Il2CppObjectBase o) where T : Il2CppObjectBase
         {
-            return o.TryCast<T>() != null;
+            return typeof(T).IsAssignableFrom(GetType(o));
         }
 #endif
 
-        public static UnityAction ToUnityAction(Action action)
+        // You can't cast to an interface type in IL2CPP, since interface info is stripped.
+        // Use this method to perform a blind cast without type checking.
+        // In Mono, just do a regular cast.
+#if MONO_BUILD
+        public static T ToInterface<T>(object o)
+        {
+            return (T)o;
+        }
+#else
+        public static T ToInterface<T>(Il2CppObjectBase o) where T : Il2CppObjectBase
+        {
+            return (T)System.Activator.CreateInstance(typeof(T), [o.Pointer]);
+        }
+#endif
+
+        // Get actual identity of Il2Cpp objects based on their ObjectClass, and
+        // convert between Il2CppScheduleOne and ScheduleOne namespaces.
+        // In Mono, return object.GetType or null.
+#if MONO_BUILD
+        public static Type GetType(object o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+            return o.GetType();
+        }
+#else
+        public static Type GetType(Il2CppObjectBase o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+
+            string typeName = Il2CppType.TypeFromPointer(o.ObjectClass).FullName;
+            return S1Assembly.GetType($"Il2Cpp{typeName}");
+        }
+#endif
+
+        // Convert a System.Action to a unity action.
+        public static UnityAction ToUnityAction(System.Action action)
         {
 #if MONO_BUILD
             return new UnityAction(action);
@@ -163,26 +221,90 @@ namespace PlantsAlwaysGrow
 #endif
         }
 
+        // Convert a delegate to a predicate that IL2CPP ienumerable functions can actually use.
 #if MONO_BUILD
-        public static T ToInterface<T>(object o)
+        public static Predicate<T> ToPredicate<T>(Func<T, bool> func)
         {
-            return (T)o;
+            return new Predicate<T>(func);
         }
 #else
-        public static T ToInterface<T>(Il2CppSystem.Object o) where T : Il2CppObjectBase
+        public static Il2CppSystem.Predicate<T> ToPredicate<T>(Func<T, bool> func)
         {
-            return CastTo<T>(System.Activator.CreateInstance(typeof(T), [o.Pointer]));
+            return DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<T>>(func);
         }
 #endif
 
-        public static void Log(string message)
+#if MONO_BUILD
+        public static Action GetActionFromList(ActionList list, Func<Action, bool> predicate)
         {
-            Utils.Mod.LoggerInstance.Msg(message);
+            return list.GetInvocationList().Find(Utils.ToPredicate<Action>(predicate));
+        }
+#else
+        public static Action GetActionFromList(Il2Cpp.ActionList list, Func<Action, bool> predicate)
+        {
+            return list.list.Find(Utils.ToPredicate<Action>(predicate));
+        }
+#endif
+
+#if MONO_BUILD
+        public static void RemoveActionFromList(ActionList list, Action action)
+        {
+            list -= action;
+        }
+#else
+        public static void RemoveActionFromList(ActionList list, Action action)
+        {
+            list.Remove(action);
+        }
+#endif
+
+#if MONO_BUILD
+        public static void AddActionToList(ActionList list, Action action)
+        {
+            list += action;
+        }
+#else
+        public static void AddActionToList(ActionList list, Action action)
+        {
+            list.Add(action);
+        }
+#endif
+
+public static void Log(string message)
+        {
+            Mod.LoggerInstance.Msg(message);
         }
 
         public static void Warn(string message)
         {
-            Utils.Mod.LoggerInstance.Warning(message);
+            Mod.LoggerInstance.Warning(message);
+        }
+
+        public static void PrintException(Exception e)
+        {
+            Warn($"Exception: {e.GetType().Name} - {e.Message}");
+            Warn($"Source: {e.Source}");
+            Warn($"{e.StackTrace}");
+            if (e.InnerException != null)
+            {
+                Warn($"Inner exception: {e.InnerException.GetType().Name} - {e.InnerException.Message}");
+                Warn($"Source: {e.InnerException.Source}");
+                Warn($"{e.InnerException.StackTrace}");
+                if (e.InnerException.InnerException != null)
+                {
+                    Warn($"Inner inner exception: {e.InnerException.InnerException.GetType().Name} - {e.InnerException.InnerException.Message}");
+                    Warn($"Source: {e.InnerException.InnerException.Source}");
+                    Warn($"{e.InnerException.InnerException.StackTrace}");
+                }
+            }
+        }
+
+        // Check if a particular MelonMod is loaded.
+        public static bool OtherModIsLoaded(string modName)
+        {
+            List<MelonBase> registeredMelons = new List<MelonBase>(MelonBase.RegisteredMelons);
+            MelonBase melon = registeredMelons.Find(new Predicate<MelonBase>(m => m.Info.Name == modName));
+            return (melon != null);
         }
 
         // Compare unity objects by their instance ID
@@ -266,6 +388,32 @@ namespace PlantsAlwaysGrow
             }
             growSpeedMultiplier /= (float)container.CoordinatePairs.Count;
             return num / (float)container.CoordinatePairs.Count;
+        }
+
+        [HarmonyPatch(typeof(GrowContainer), "InitializeGridItem")]
+        [HarmonyPostfix]
+        public static void InitializeGridItemPostfix(GrowContainer __instance)
+        {
+            // Remove GrowContainer.OnMinPass from onMinutePass list and add it to onUncappedMinutePass
+            TimeManager timeManager = NetworkSingleton<TimeManager>.Instance;
+            Action action = Utils.GetActionFromList(timeManager.onMinutePass, (Action a) => 
+                a.Method.Name == "OnMinPass" && a.Target == __instance
+            );
+            Utils.RemoveActionFromList(timeManager.onMinutePass, action);
+            Utils.AddActionToList(timeManager.onUncappedMinutePass, action);
+        }
+
+        [HarmonyPatch(typeof(GrowContainer), "Destroy")]
+        [HarmonyPrefix]
+        public static void DestroyPrefix(GrowContainer __instance)
+        {
+            // Put GrowContainer.OnMinPass back on the onMinutesPass list so this container can be destroyed cleanly
+            TimeManager timeManager = NetworkSingleton<TimeManager>.Instance;
+            Action action = Utils.GetActionFromList(timeManager.onUncappedMinutePass, (Action a) => 
+                a.Method.Name == "OnMinPass" && a.Target == __instance
+            );
+            Utils.RemoveActionFromList(timeManager.onUncappedMinutePass, action);
+            Utils.AddActionToList(timeManager.onMinutePass, action);
         }
     }
 }
