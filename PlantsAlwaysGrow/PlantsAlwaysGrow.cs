@@ -5,8 +5,6 @@ using UnityEngine.Events;
 using UnityEngine;
 using System.Reflection;
 
-
-
 #if MONO_BUILD
 using ScheduleOne.DevUtilities;
 using ScheduleOne.GameTime;
@@ -397,10 +395,13 @@ public static void Log(string message)
             // Remove GrowContainer.OnMinPass from onMinutePass list and add it to onUncappedMinutePass
             TimeManager timeManager = NetworkSingleton<TimeManager>.Instance;
             Action action = Utils.GetActionFromList(timeManager.onMinutePass, (Action a) => 
-                a.Method.Name == "OnMinPass" && a.Target == __instance
+                a.Method?.Name == "OnMinPass" && a.Target == __instance
             );
-            Utils.RemoveActionFromList(timeManager.onMinutePass, action);
-            Utils.AddActionToList(timeManager.onUncappedMinutePass, action);
+            if (action != null)
+            {
+                Utils.RemoveActionFromList(timeManager.onMinutePass, action);
+                Utils.AddActionToList(timeManager.onUncappedMinutePass, action);
+            }
         }
 
         [HarmonyPatch(typeof(GrowContainer), "Destroy")]
@@ -410,10 +411,13 @@ public static void Log(string message)
             // Put GrowContainer.OnMinPass back on the onMinutesPass list so this container can be destroyed cleanly
             TimeManager timeManager = NetworkSingleton<TimeManager>.Instance;
             Action action = Utils.GetActionFromList(timeManager.onUncappedMinutePass, (Action a) => 
-                a.Method.Name == "OnMinPass" && a.Target == __instance
+                a.Method?.Name == "OnMinPass" && a.Target == __instance
             );
-            Utils.RemoveActionFromList(timeManager.onUncappedMinutePass, action);
-            Utils.AddActionToList(timeManager.onMinutePass, action);
+            if (action != null)
+            {
+                Utils.RemoveActionFromList(timeManager.onUncappedMinutePass, action);
+                Utils.AddActionToList(timeManager.onMinutePass, action);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ using MelonLoader;
 using HarmonyLib;
 
 
-[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.2.0", "lasersquid", null)]
+[assembly: MelonInfo(typeof(PlantsAlwaysGrow.PlantsAlwaysGrowMod), "PlantsAlwaysGrowMod", "1.2.1", "lasersquid", null)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 namespace PlantsAlwaysGrow
@@ -46,3 +46,4 @@ namespace PlantsAlwaysGrow
 // fix initialization msg - done
 // shrooms update - done
 // storage update - done (1.2.0)
+// bugfix: picking up pots causes duplication/other problems - done (1.2.1)
