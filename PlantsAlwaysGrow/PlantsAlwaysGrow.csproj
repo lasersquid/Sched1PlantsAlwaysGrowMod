@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<ProjName>PlantsAlwaysGrow</ProjName>
-		<Version>1.2.1</Version>
+		<Version>1.2.2</Version>
 		<GameDir>C:/Program Files (x86)/Steam/steamapps/common/Schedule I</GameDir>
 		<GamePath>$(GameDir)/Schedule I.exe</GamePath>
-		<TargetFramework>net6</TargetFramework>
 		<Configuration>IL2CPP</Configuration>
 	</PropertyGroup>
 
@@ -72,6 +71,9 @@
 		<Reference Include="Il2Cppmscorlib">
 			<HintPath>il2cpp_libs/Il2Cppmscorlib.dll</HintPath>
 		</Reference>
+		<Reference Include="Il2CppScheduleOne.Core">
+			<HintPath>il2cpp_libs/Il2CppScheduleOne.Core.dll</HintPath>
+		</Reference>
 		<Reference Include="MelonLoader">
 			<HintPath>il2cpp_libs/MelonLoader.dll</HintPath>
 		</Reference>
@@ -123,6 +125,7 @@
 	<ItemGroup>
 		<PackageReference Include="LavaGang.MelonLoader" Version="0.7.0" />
 		<PackageReference Include="Lib.Harmony" Version="2.3.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0.0" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
